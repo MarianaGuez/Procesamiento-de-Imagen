@@ -72,7 +72,7 @@ retinaGrises = rgb2gray(retina);image(retinaGrises);title('Escala de Grises'); %
 nexttile
 retinaHSV = rgb2hsv(retina);image(retinaHSV);title('HSV'); %rgb2hsv es la funcion para convertir imagenes rgb a valor de saturación de tono. El tono se mide en grados de 0 a 360. 
 nexttile
-retinaYUV = rgb2ycbcr(retina);image(retinaYUV); title('YUV'); %rgb2yuv es la función para convertir imagenes rgb a el modelo YUV
+retinaYUV = rgb2ycbcr(retina);image(retinaYUV); title('YUV'); %rgb2ycbcr es la función para convertir imagenes rgb a el modelo YUV
 % éste modelo define un componente de luminancia (Y), que significa brillo de espacio lineal físico, y dos componentes de crominancia, llamados U (proyección azul) y V (proyección roja).
 
 %%                          EJERCICIO 3                               %%
@@ -107,8 +107,23 @@ figure('Name','Image'); image(abdomen);
 figure('Name','Imagesc'); imagesc(abdomen); 
 %En este ejercicio es de la misma forma, sin embargo, ahora baja la
 %resolución
+
 %%                          EJERCICIO 6                               %%
 %Despliega la paleta de colores RGB por separado
+Lena = imread('LenaOrig.jpg');
+figure('Name', 'Ejercicio 6: Lena con colorbar');
+nexttile
+imagesc(Lena); title('Lena'); 
+nexttile
+imagesc(Lena(:,:,1));title('Componente de Rojo'); 
+colorbar
+nexttile
+imagesc(Lena(:,:,2));title('Componente de verde');
+colorbar
+nexttile
+imagesc(Lena(:,:,3));title('Componente de azul');
+colormap("jet");
+colorbar
 
 %%                         EJERCICIO 7                                %%
 % Visualizar la imagen "intestinoRGB.jpg" con diferentes paletas de colores
