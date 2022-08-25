@@ -130,6 +130,7 @@ colorbar
 %predefinidas de MATLAB
 
 intestino = imread("IntestinoRGB.jpg");
+
 figure('Name','Ejercicio 7: Intestino Copper');
 nexttile
 imshow(intestino);title('Intestino'); 
@@ -168,16 +169,16 @@ imshow(intestino(:,:,3), 'Colormap', hsv(256)); title('Componente azul');
 cta = imread("cta_scan_index.bmp");
 figure('Name','imagen indexada');
 nexttile
-imagesc(cta);colormap("hot");title('Imagen Original');
+image(cta);colormap;title('Imagen Original');
 nexttile
 rotada45 = imrotate(cta,45);                    %imrotate es la funcion para rotar la imagen, cta es la imagen a rotar, seguido de los grados a rotar
-imagesc(rotada45);title('Imagen Rotada 45°');
+image(rotada45);title('Imagen Rotada 45°');
 nexttile
 rotada90 = imrotate(cta, 90);
-imagesc(rotada90);title('Imagen Rotada 90°');
+image(rotada90);title('Imagen Rotada 90°');
 nexttile
 rotada180 = imrotate(cta, 180);
-imagesc(rotada180);title('Imagen Rotada 180°');
+image(rotada180);title('Imagen Rotada 180°');
 
 %%                            EJERCICIO 9                             %%
 %Convierte la imagen mir.jpg a escala de grises y guardala en formato .tif
