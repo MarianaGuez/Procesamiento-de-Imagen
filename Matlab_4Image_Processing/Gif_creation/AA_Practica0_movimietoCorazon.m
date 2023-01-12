@@ -2,7 +2,7 @@
 %%% Simular el movimiento del corazon imprimeindo las 280 imagenes dicom en
 %%% una sola ventana.
 
-folder = '/home/mxgz/Documents/Maestria/Diversion/ProcesamientoImagen/Practica0/Ejercicio10'; %Dirección donde estan guardadas las imagenes
+folder = '/home/mxgz/Documents/Maestria/Diversion/ProcesamientoImagen/Matlab_4Image_Processing/Gif_creation'; %Dirección donde estan guardadas las imagenes
 filesnames = dir(fullfile(folder,'*.dcm')); %la funcion dir() enlista los archivos de un folder, la funcion fullfile() construye la especificacion 
 % completa del archivo envase al folder y al nombre del archivo. en este
 % caso todos los archivos con extención .dcm
