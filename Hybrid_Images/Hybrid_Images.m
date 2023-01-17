@@ -104,7 +104,7 @@ for i=0:4
     imshow(uint8(I))
 end
 
-%% Suma de niveles
+%% Levels sum
 function[M]=SumaNiveles(L,H,Nivel,k1,k2)
     %%H es la imagen que proporciona las frecuencias altas
     %%L es la imgen que proporciona las frecuencias bajas
@@ -116,7 +116,7 @@ function[M]=SumaNiveles(L,H,Nivel,k1,k2)
     Y=imresize(Y, size(X));
     M=k1*double(X)+k2*double(Y);
 end
-%% Apple_orange
+%% Apple_orange Hybrid function
 function[M]=Apple_orange(A,B,Nivel)
     [r,c]=size(B);
     r_nivel=round(r/2^(Nivel-1));
@@ -154,7 +154,7 @@ function[M]=Apple_orange(A,B,Nivel)
     end
 end
 
-%% Reconstrucción
+%% Reconstruction of Hybrid Images
 function[M]=Reconstruccion_Hibrida(A,B,Nivel,k1,k2) %%La imagen A proporciona frecuencias bajas
     %%La imagen B proporciona frecuencias altas
     %%El nivel representa el nivel de la pirámide de la imagen reconstruida
@@ -170,14 +170,14 @@ function[M]=Reconstruccion_Hibrida(A,B,Nivel,k1,k2) %%La imagen A proporciona fr
         M=k1*double(imresize(uint8(Temp),[round(r/2^(Nivel-1)), round(c/2^(Nivel-1))],"cubic"))+k2*H;
     end
 end
-%% Piramide 2
+%% Laplacian Pyramid
 function[M]=PiramideLaplaciana(A, Nivel)
     %L1=double(I)-double(imresize(Im1,[row, col],"cubic"));
     [row,col]=size(A);
     B=PiramideGaussiana(A, Nivel);
     M=double(PiramideGaussiana(A, Nivel-1))-double(imresize(B,[round(row/2^(Nivel-1)), round(col/2^(Nivel-1))],"cubic"));
 end
-%% Piramide
+%% Gaussian Pyramid
 function[M]=PiramideGaussiana(A, Nivel)
     Kernel=VectorBinomialDerivate(5,0);
     Kernel=Kernel'*Kernel; 
@@ -189,7 +189,7 @@ function[M]=PiramideGaussiana(A, Nivel)
     end
     M=A;
 end
-%% Función que permite obtener la enesima derivada
+%% Binomial Filter Calculator
 function [v] = VectorBinomialDerivate(L,d)%%L es la longitud del vector deseado
 L1=L-d-1; %%% Se crea una nueva variable la cual corresponde al vector binomial que se deriva d veces
 v=zeros(1,L1+1);
