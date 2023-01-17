@@ -1,0 +1,110 @@
+
+folder = '/home/mxgz/Documents/Maestria/Diversion/ImageProcessing/Medical_Segmentation';   %Path to the images
+filesnames = dir(fullfile(folder,'*.dcm'));                                                %the function dir() recollect the files on the folder, the function fullfile() create the full path                                                                                                                       % completa del archivo envase al folder y al nombre del archivo. en este                                                                                                                     % caso todos los archivos con extención .dcm
+total_Img = numel(filesnames);                                                             %Numel return the number of files located on the path
+Parche = zeros(512,512);
+
+% m = 0;
+% while(m <5)
+ for n = 1:total_Img
+    %Read data
+    f = fullfile(folder,filesnames(n).name);
+    Im = dicomread(f);                                                                     %dicomread() is used to read the .dcm files
+    
+    %Here starts the 1st Mask 
+    Filtro_Gausiano_1 = imgaussfilt(Im,1);
+    Mascara_1_bin = imbinarize(Filtro_Gausiano_1,0.5);
+    Mascara_1 = uint16(Mascara_1_bin);
+    
+    %Here is created the mask
+    Im_Original = uint16(Im);
+    Im_Mascara_1 = Mascara_1.*Im_Original;
+    
+    %Here start the 2nd mask
+    Aumento_Contraste_1 = imadjust(Im_Mascara_1);
+    Filtro_Gausiano_2 = imgaussfilt(Aumento_Contraste_1);
+    Valores_Umbral = multithresh(Filtro_Gausiano_2,4);
+    Cuantizacion_1 = imquantize(Filtro_Gausiano_2,Valores_Umbral);
+    Pixeles_Interes_1 = Cuantizacion_1 > 3;
+    Parche(1:310,:) = Pixeles_Interes_1(1:310,:);
+
+    %Morphology is implemented
+    Morfologia_Apertura_1 = imopen(Parche,strel("disk",8,0));
+    Morfologia_Cerradura_1 = imclose(Morfologia_Apertura_1,strel("disk",10,0));
+    Mascara_2 = imdilate(Morfologia_Cerradura_1,strel("disk",5,0));
+
+    %Here is created the 2nd mask
+    Conversion_Mascara_2 = uint16(Mascara_2);
+    Im_Mascara_2 = Conversion_Mascara_2.*Im_Original;
+
+    %The nonzero pixels are found to identify the center of each image and have a common center between them
+    [coordenadas_y,coordenadas_x] = find(Im_Mascara_2); 
+    centroide = [round(mean(coordenadas_x)),round(mean(coordenadas_y))];  
+    
+    %It's specify the new size of the image and then it's cut
+    Pixel_Inicio_y = centroide(2) - 100;
+    Pixel_Inicio_x = centroide(1) - 100;
+    Longitud_Imagen=200;
+    Nueva_Mascara_2 = imcrop(Im_Mascara_2, [Pixel_Inicio_x Pixel_Inicio_y Longitud_Imagen Longitud_Imagen]);
+    Nueva_Imagen = imcrop(Im, [Pixel_Inicio_x Pixel_Inicio_y Longitud_Imagen Longitud_Imagen]);
+    
+    %Here start the 3rd mask / It is used to find the pixel of interest to
+    %start making the movement detection of the aorta
+    Valores_Umbral = multithresh(Nueva_Mascara_2,2);
+    Cuantizacion_2 = imquantize(Nueva_Mascara_2,[130 390]);
+    Morfologia_Apertura_2 = imerode(Cuantizacion_2,strel("disk",10,0));
+    Pixeles_Interes_2 = Cuantizacion_2 == 2;
+
+    %It's found the coordinates of the interested pixels
+    [Coordenadas_y,Coordenadas_x] = find(Pixeles_Interes_2);
+    if (n == 1)
+        Coordenadas_Temporales_y = Coordenadas_y(1:2300);
+        Coordenadas_Temporales_x = Coordenadas_x(1:2300);
+    end
+    X = Coordenadas_Temporales_x;
+    Y = Coordenadas_Temporales_y;
+    U = Coordenadas_x(1:2300) - X;
+    V = Coordenadas_y(1:2300) - Y;
+    
+    %Here is created the 3rd mask
+    Mascara_3 = uint16(Pixeles_Interes_2);
+    Nueva_Imagen = uint16(Nueva_Imagen);
+    Im_Mascara_3 = Mascara_3.*Nueva_Imagen;
+
+    
+%VEC
+%     figure
+%     imagesc(Pixeles_Interes_2)
+%     colormap("gray")
+%     hold on
+%     quiver(X,Y,U,V,2), hold off, axis image
+% 
+%     Coordenadas_Temporales_y = Coordenadas_y(1:2300);
+%     Coordenadas_Temporales_x = Coordenadas_x(1:2300);
+
+%VISUALIZACION MASCARA 3
+%     Normalizacion_Nueva_Imagen = imadjust(Nueva_Imagen);
+%     Normalizacion_Mascara = imadjust(Mascara_3);
+%     figure
+%     maskOn = labeloverlay(Normalizacion_Nueva_Imagen,Normalizacion_Mascara);
+%     imshow(maskOn)
+
+%VISUALIZACION MASCARA 2
+%     Normalizacion = imadjust(Im);
+%     Normalizacion_Mascara = imadjust(Mascara_2);
+%     %figure
+%     maskOn = labeloverlay(Normalizacion,Normalizacion_Mascara);
+%     imshow(maskOn)
+
+%VISUALIZACION MASCARA 1
+%     Normalizacion = imadjust(Im);
+%     Normalizacion_Mascara = imadjust(Mascara_1);
+%     %figure
+%     maskOn = labeloverlay(Normalizacion,Normalizacion_Mascara);
+%     imshow(maskOn)
+
+
+    pause(0.5)                                                                                                                                  %realiza una pausa de .5 segundos
+ end
+% m = m+1;
+% end
